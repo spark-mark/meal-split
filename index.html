@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Meal Split</title>
 <meta name="description" content="Split a restaurant order into meal-allowance checks that stay under the USD caps.">
-<meta name="theme-color" content="#f5efe4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#fbf7ec" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b130d" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -18,29 +18,29 @@
 /* Layout: one narrow phone column, three steps; header (back · step · settings), scrolling body, sticky footer.
    Monochrome: one dark-brown ink on beige paper, greys for hierarchy, hairlines instead of fills where possible. */
 :root {
-  --bg: #f5efe4;
+  --bg: #fbf7ec;
   --fg: #2a1c13;
   --fg2: #7a6553;
-  --fg3: #ab9884;
-  --fill: #ece3d4;
-  --line: #ddd0bc;
-  --track: #e2d6c4;
+  --fg3: #b2a38c;
+  --fill: #f3ecdc;
+  --line: #e7dec9;
+  --track: #ece3d0;
   --hold: rgba(42,28,19,.10);
-  --knob: #fbf8f2;
+  --knob: #fffdf7;
   --scrim: rgba(30,19,11,.32);
   --r: 12px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1b130d; --fg: #f1e7d8; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
-    --track: #33261b; --hold: rgba(241,231,216,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
+    --bg: #1b130d; --fg: #f7f0de; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
+    --track: #33261b; --hold: rgba(247,240,222,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #1b130d; --fg: #f1e7d8; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
-  --track: #33261b; --hold: rgba(241,231,216,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
+  --bg: #1b130d; --fg: #f7f0de; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
+  --track: #33261b; --hold: rgba(247,240,222,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
