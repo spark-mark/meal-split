@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Meal Split</title>
 <meta name="description" content="Split a restaurant order into meal-allowance checks that stay under the USD caps.">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5efe4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b130d" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Meal Split">
@@ -16,31 +16,31 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <style>\n:root {{ padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }}\nbody {{ margin: 0; }}\n[hidden] {{ display: none !important; }}
 /* Layout: one narrow phone column, three steps; header (back · step · settings), scrolling body, sticky footer.
-   Monochrome: one ink colour on paper, greys for hierarchy, hairlines instead of fills where possible. */
+   Monochrome: one dark-brown ink on beige paper, greys for hierarchy, hairlines instead of fills where possible. */
 :root {
-  --bg: #ffffff;
-  --fg: #111111;
-  --fg2: #6b6b6b;
-  --fg3: #a3a3a3;
-  --fill: #f5f5f5;
-  --line: #e4e4e4;
-  --track: #ebebeb;
-  --hold: rgba(17,17,17,.10);
-  --knob: #ffffff;
-  --scrim: rgba(0,0,0,.28);
+  --bg: #f5efe4;
+  --fg: #2a1c13;
+  --fg2: #7a6553;
+  --fg3: #ab9884;
+  --fill: #ece3d4;
+  --line: #ddd0bc;
+  --track: #e2d6c4;
+  --hold: rgba(42,28,19,.10);
+  --knob: #fbf8f2;
+  --scrim: rgba(30,19,11,.32);
   --r: 12px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0b0b0b; --fg: #f2f2f2; --fg2: #9a9a9a; --fg3: #5f5f5f; --fill: #171717; --line: #262626;
-    --track: #242424; --hold: rgba(242,242,242,.14); --knob: #cfcfcf; --scrim: rgba(0,0,0,.6);
+    --bg: #1b130d; --fg: #f1e7d8; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
+    --track: #33261b; --hold: rgba(241,231,216,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0b0b0b; --fg: #f2f2f2; --fg2: #9a9a9a; --fg3: #5f5f5f; --fill: #171717; --line: #262626;
-  --track: #242424; --hold: rgba(242,242,242,.14); --knob: #cfcfcf; --scrim: rgba(0,0,0,.6);
+  --bg: #1b130d; --fg: #f1e7d8; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
+  --track: #33261b; --hold: rgba(241,231,216,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -70,7 +70,7 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .bars { display: flex; gap: 6px; margin-top: 10px; }
 .bars i { flex: 1; height: 3px; border-radius: 2px; background: var(--track); }
 .bars i.on { background: var(--fg); }
-h1 { margin: 0; font-size: 26px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
+h4 { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; }
 .body { padding-block: 24px 16px; display: flex; flex-direction: column; gap: 24px; flex: 1; }
 .foot {
   position: sticky; bottom: 0; background: var(--bg);
@@ -337,7 +337,7 @@ function header(n, back) {
 function viewWho() {
   const al = allowances(), avail = al.reduce((s, a) => s + a.capUSD, 0);
   return `<section class="step">
-    ${header(1, null)}<h1>Who's eating?</h1></div>
+    ${header(1, null)}<h4>Who's eating?</h4></div>
     <div class="body">
       ${S.people.map((p, i) => `<div class="person" data-pid="${p.id}">
         <div class="person-top">
@@ -371,7 +371,7 @@ function viewOrder() {
     </div>`;
   }).join("");
   return `<section class="step">
-    ${header(2, "who")}<div><h1>What's on the order?</h1>
+    ${header(2, "who")}<div><h4>What's on the order?</h4>
       ${S.example ? `<div class="example">Example order<button class="linkbtn" type="button" data-act="clear">Clear</button></div>` : ""}</div></div>
     <div class="body">
       <div class="items">
@@ -412,7 +412,7 @@ function viewChecks() {
   return `<section class="step">
     ${header(3, "order")}<div>
       ${covered ? "" : `<div class="result"><span class="status warn">You pay ${cad(R.outOfPocket)}</span></div>`}
-      <h1>${covered ? "Check split done!" : "Almost covered"}</h1></div></div>
+      <h4>${covered ? "Check split done!" : "Almost covered"}</h4></div></div>
     <div class="body">
       <div class="checks">${cards}${self}${R.used.length ? `<p class="leftover">${cad(R.leftover)} leftover</p>` : ""}</div>
       ${R.capped ? `<p class="note">Big order: this is the best split found, but a better one may exist.</p>` : ""}
