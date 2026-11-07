@@ -14,9 +14,13 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<link rel="stylesheet" href="/vendor/drawably/style.css">
 <style>\n:root {{ padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }}\nbody {{ margin: 0; }}\n[hidden] {{ display: none !important; }}
 /* Layout: one narrow phone column, two steps (order + budgets, then checks); header (back · step · settings), scrolling body, sticky footer.
-   Monochrome: one dark-brown ink on beige paper, greys for hierarchy, hairlines instead of fills where possible. */
+   Fine stationery: dark-brown ink on cream paper, thin hand-ruled lines from Drawably that fade in patches (ink.png), a faint grain from paper.png. */
 :root {
   --bg: #fbf7ec;
   --fg: #2a1c13;
@@ -28,26 +32,34 @@
   --hold: rgba(42,28,19,.10);
   --knob: #fffdf7;
   --scrim: rgba(30,19,11,.32);
-  --r: 12px;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --lift: rgba(42,28,19,.16);
+  --r: 0;
+  --font: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --drawably-stroke: var(--fg);
+  --drawably-fill: var(--fg);
+  --drawably-paper: var(--bg);
+  --drawably-width: .8;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #1b130d; --fg: #f7f0de; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
     --track: #33261b; --hold: rgba(247,240,222,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
+    --lift: rgba(0,0,0,.5);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #1b130d; --fg: #f7f0de; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
   --track: #33261b; --hold: rgba(247,240,222,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
+  --lift: rgba(0,0,0,.5);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
   background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 17px; line-height: 1.3;
-  -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums tabular-nums;
 }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .12s ease-out, opacity .12s ease-out; }
@@ -124,36 +136,26 @@ h4 { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.2; letter-spac
 .tile.live b { font-weight: 600; }
 
 /* step 2 */
-.result { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 15px; margin-bottom: 8px; }
-.result .status { font-weight: 600; color: var(--fg); }
-.leftover { margin: 0; padding: 0 4px; font-size: 15px; color: var(--fg2); text-align: right; }
-.checks { display: flex; flex-direction: column; gap: 12px; }
-.check { background: var(--fill); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-.check.self { background: var(--bg); border: 1px dashed var(--line); }
-.check-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 15px; color: var(--fg2); }
-.check-top b { font-weight: 500; }
-.check ul { margin: 0; padding: 0; list-style: none; font-size: 20px; font-weight: 600; line-height: 1.3; }
-.check ul small { font-size: 15px; font-weight: 400; color: var(--fg2); }
 .note { font-size: 13px; color: var(--fg2); margin: 0; }
 
 /* sheets */
 .scrim { position: fixed; inset: 0; background: var(--scrim); display: flex; flex-direction: column; justify-content: flex-end; z-index: 20; }
 .sheet {
-  background: var(--bg); border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; margin: 0 auto;
+  background: var(--bg); width: 100%; max-width: 480px; margin: 0 auto;
   padding-top: 10px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px));
   display: flex; flex-direction: column; gap: 18px; max-height: 90%; overflow-y: auto;
 }
 /* add/edit item: the form floats in the free space, the budgets dock to the bottom edge */
-.scrim.split { overflow-y: auto; padding-top: calc(env(safe-area-inset-top, 0px) + 12px); }
+.scrim.split { overflow-x: hidden; overflow-y: auto; padding-top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .scrim.out { pointer-events: none; }
 body:has(.scrim.split:not(.out)) .foot { visibility: hidden; }
 .card {
-  background: var(--bg); border-radius: 20px; flex: none; width: calc(100% - 32px); max-width: 448px; margin: auto;
+  background: var(--bg); flex: none; width: calc(100% - 32px); max-width: 448px; margin: auto;
   padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 18px;
 }
 .dock {
-  background: var(--bg); border-radius: 20px 20px 0 0; flex: none; width: 100%; max-width: 480px; margin: 12px auto 0;
+  background: var(--bg); flex: none; width: 100%; max-width: 480px; margin: 12px auto 0;
   padding-top: 20px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px));
 }
@@ -175,17 +177,71 @@ body:has(.scrim.split:not(.out)) .foot { visibility: hidden; }
 .field input::placeholder { color: var(--fg3); }
 .field input.right { flex: none; width: 84px; text-align: right; }
 .field .unit { color: var(--fg2); }
-.switch { width: 51px; height: 31px; border-radius: 999px; border: 0; background: var(--track); position: relative; flex: none; padding: 0; transition: background .2s; }
-.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: var(--knob); box-shadow: 0 1px 3px rgba(0,0,0,.18); transition: transform .2s, background .2s; }
-.switch[aria-checked="true"] { background: var(--fg); }
-.switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--bg); }
 .group-note { font-size: 13px; color: var(--fg2); margin: -10px 16px 0; }
 .group-note a, .group-note .inline { color: var(--fg); text-decoration: underline; text-underline-offset: 2px; }
 .group-note .inline { border: 0; background: none; padding: 0; font-size: inherit; }
 .danger { border: 1px solid var(--line); background: var(--bg); border-radius: var(--r); min-height: 52px; color: var(--fg); font-size: 17px; width: 100%; }
-.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); font-size: 15px; padding: 8px 16px; border-radius: 999px; z-index: 30; }
+.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); font-size: 15px; padding: 8px 16px; z-index: 30; }
+
+/* paper layer: Drawably draws the lines, so boxes drop their own borders and fills; the grain sits over everything but takes no taps */
+.drawably-button, .drawably-card { font-family: inherit; }
+/* ink.png lets a line run light in patches; each box offsets it by its seed so no two fade alike */
+.drawably-svg { -webkit-mask: url(/ink.png) var(--ink, 0 0) / 340px; mask: url(/ink.png) var(--ink, 0 0) / 340px; }
+.primary .drawably-svg, .ck .drawably-svg { -webkit-mask: none; mask: none; }
+.ck { flex: none; }
+body::after { content: ""; position: fixed; inset: 0; z-index: 40; pointer-events: none; background: url(/paper.png) 0 0 / 256px; }
+h4, h4.drawably-host { font-size: 28px; font-weight: 500; line-height: 1.15; letter-spacing: -.012em; }
+.navrow .label, .example, .group-note { font-style: italic; }
+.bars i, .bars i.on { flex: 1; height: 8px; margin: 0; background: none; border-radius: 0; }
+
+.item { border: 0; background: none; padding: 0; }
+.item.sel { border: 0; margin: 0; }
+.item .qty button { border: 0; background: none; }
+.additem { border: 0; background: none; font-weight: 400; font-style: italic; }
+
+.tile { border: 0; background: none; }
+.tile b { font-size: 16px; line-height: 1.2; }
+.tile small { font-size: 13.5px; line-height: 1.2; }
+.tile i { left: 4px; top: 4px; bottom: 4px; max-width: calc(100% - 8px); background: var(--fill); overflow: hidden; }
+.tile[aria-pressed="false"], .tile.live { border: 0; }
+.tile[aria-pressed="false"] small { font-style: italic; }
+.tile.live b { font-weight: 500; }
+
+.sum-top .status { font-size: 18px; font-weight: 500; }
+.sum-top .status.idle { font-style: italic; }
+.item .name .q, .item .price small { color: var(--fg2); }
+.primary { background: none; font-size: 18px; font-weight: 500; letter-spacing: .01em; }
+.hold, .danger { border: 0; background: none; font-size: 16px; }
+.sheet-bar h2 { font-weight: 500; }
+
+/* the checks print as one slip: torn top and bottom, always cream, even on the dark theme */
+.slip { filter: drop-shadow(0 8px 14px var(--lift)); }
+.receipt {
+  --fg: #2a1c13; --fg2: #6f5c4b;
+  background: #fffdf6; color: var(--fg); padding: 30px 22px; font-family: var(--mono); font-size: 13.5px; line-height: 1.55; letter-spacing: -.01em;
+  -webkit-mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 14px 51% repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 51% repeat-x;
+  mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 14px 51% repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 51% repeat-x;
+}
+.r-head { text-align: center; padding-bottom: 14px; }
+.r-head b { display: block; font-family: var(--font); font-size: 23px; font-weight: 500; letter-spacing: 0; line-height: 1.2; }
+.r-head span { color: var(--fg2); font-size: 12px; }
+.r-part { border-top: 1px dashed var(--fg2); padding-block: 14px; }
+.r-row { display: flex; justify-content: space-between; gap: 16px; }
+.r-row > :last-child { flex: none; }
+.r-title { font-weight: 500; margin-bottom: 8px; opacity: .5; }
+.r-part ul { margin: 0; padding: 0; list-style: none; font-size: 16px; line-height: 1.5; }
+.r-part li small { display: block; font-size: 11.5px; color: var(--fg2); }
+.r-total { font-size: 16px; font-weight: 500; margin-top: 8px; }
+.r-sum .r-row:last-child { font-weight: 500; }
+
+.card { box-shadow: 0 14px 40px var(--lift); }
+.dock { box-shadow: 0 -10px 30px var(--lift); }
+.group { background: none; padding: 0; }
+.field { padding-block: 8px; }
+.field + .field::before { background: var(--line); }
+
 @media (prefers-reduced-motion: reduce) {
-  button, .switch, .switch::after { transition: none; }
+  button { transition: none; }
   button:active:not(:disabled):not(.hold) { transform: none; }
 }
 </style>
@@ -194,7 +250,9 @@ body:has(.scrim.split:not(.out)) .foot { visibility: hidden; }
 <div class="app" id="app"></div>
 <div class="toast" id="toast" hidden></div>
 
-<script>
+<script type="module">
+import { drawablyButton, drawablyCard, drawablyCheckbox, drawablyDivider } from "/vendor/drawably/index.js";
+
 const RATE_DEFAULT = 0.7155;           // Wise mid-market, Nov 1 2026
 const RATE_DATE = "Nov 1, 2026";
 const KEY = "meal-split-v2";
@@ -402,20 +460,26 @@ function viewOrder() {
 }
 
 function viewChecks() {
-  const R = solve(), covered = !R.outOfPocket;
-  const list = es => `<ul>${lines(es).map(g => `<li>${esc(lineText(g))}${g.part ? ` <small>(part, ${cad(g.cents)} of ${cad(g.of)})</small>` : ""}</li>`).join("")}</ul>`;
-  const cards = R.used.map((b, i) => `<div class="check">
-      <div class="check-top"><b>Check ${i + 1} · ${esc(b.label)}</b><span>${cad(b.load)}</span></div>${list(b.entries)}
-    </div>`).join("");
-  const self = R.self.length ? `<div class="check self">
-      <div class="check-top"><b>Pay separately</b><span>${cad(R.outOfPocket)}</span></div>${list(R.self)}
-    </div>` : "";
+  const R = solve(), now = new Date();
+  const list = es => `<ul>${lines(es).map(g => `<li><div class="r-row"><span>${esc(lineText(g))}</span><span>${cad(g.cents)}</span></div>${g.part ? `<small>part of ${cad(g.of)}</small>` : ""}</li>`).join("")}</ul>`;
+  const part = (title, side, es, total) => `<div class="r-part">
+      <div class="r-row r-title"><span>${title}</span><span>${side}</span></div>${list(es)}
+      <div class="r-row r-total"><span>Total</span><span>${cad(total)}</span></div>
+    </div>`;
+  const checks = R.used.map((b, i) => part(`Check ${i + 1}`, esc(b.label), b.entries, b.load)).join("");
+  const self = R.self.length ? part("Pay separately", "", R.self, R.outOfPocket) : "";
   return `<section class="step">
-    ${header(2, "order")}<div>
-      ${covered ? "" : `<div class="result"><span class="status warn">You pay ${cad(R.outOfPocket)}</span></div>`}
-      <h4>${covered ? "Check split done!" : "Almost covered"}</h4></div></div>
+    ${header(2, "order")}</div>
     <div class="body">
-      <div class="checks">${cards}${self}${R.used.length ? `<p class="leftover">${cad(R.leftover)} leftover</p>` : ""}</div>
+      <div class="slip"><div class="receipt">
+        <div class="r-head"><b>Meal Split</b><span>${now.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })} · ${now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</span><br><span>1 CAD = US$${rate().toFixed(4)}</span></div>
+        ${checks}${self}
+        <div class="r-part r-sum">
+          <div class="r-row"><span>Order total</span><span>${cad(R.total)}</span></div>
+          ${R.used.length ? `<div class="r-row"><span>Left unused</span><span>${cad(R.leftover)}</span></div>` : ""}
+          <div class="r-row"><span>You pay</span><span>${cad(R.outOfPocket)}</span></div>
+        </div>
+      </div></div>
       ${R.capped ? `<p class="note">Big order: this is the best split found, but a better one may exist.</p>` : ""}
     </div>
     <div class="foot"><button class="hold" type="button" id="hold"><span class="fill" id="hold-fill" aria-hidden="true"></span><span class="txt">Hold to clear checks and restart</span></button></div>
@@ -455,7 +519,7 @@ function sheetHTML() {
         <div class="field"><button class="linkbtn" type="button" data-act="addp">+ Add someone</button></div>
       </div>
       <div class="group">
-        <div class="field"><span id="split-l">Items can be split across checks</span><button class="switch" type="button" role="switch" aria-labelledby="split-l" aria-checked="${!!S.split}" data-act="split"></button></div>
+        <label class="field"><span id="split-l">Items can be split across checks</span><span class="ck"><input type="checkbox" aria-labelledby="split-l" data-act="split" ${S.split ? "checked" : ""}></span></label>
       </div>
       <button class="danger" type="button" data-act="clear">Clear order</button>
     </div></div>`;
@@ -475,12 +539,34 @@ function fadeOut(el, done) {
 
 /* views are rebuilt on every change, so CSS transitions can't run: note what's on screen, then animate from it */
 const tileKey = t => t.closest("[data-pid]").dataset.pid + t.dataset.kind;
+/* a sketch's look comes from its seed, so seed from what the element is and a rebuild redraws the same strokes */
+const seedOf = key => [...String(key)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+function draw(root) {
+  const each = (sel, attach, opts = () => ({})) => root.querySelectorAll(sel).forEach((el, i) => {
+    const key = el.dataset.kind ? tileKey(el) : (el.closest("[data-iid]")?.dataset.iid || "") + sel + i;
+    const seed = seedOf(key);
+    el.style.setProperty("--ink", `${seed % 340}px ${(seed >>> 9) % 340}px`);
+    attach(el, { seed, roughness: .32, radius: 0, boil: 0, ...opts(el) });
+  });
+  each(".primary", drawablyButton, () => ({ variant: "solid" }));
+  each(".hold, .danger", drawablyButton);
+  each(".additem", drawablyButton, () => ({ stroke: "var(--fg2)" }));
+  each(".item .qty button", drawablyButton);
+  each(".tile", drawablyButton, t => {
+    const live = t.classList.contains("live"), on = t.getAttribute("aria-pressed") === "true";
+    return { stroke: live ? "var(--fg)" : on ? "var(--fg2)" : "var(--line)", width: live ? 1.5 : .8 };
+  });
+  each(".item", drawablyCard, r => { const sel = r.classList.contains("sel"); return { width: sel ? 1.5 : .8, stroke: sel ? "var(--fg)" : "var(--fg2)" }; });
+  each(".group, .card", drawablyCard);
+  each(".bars i", drawablyDivider, b => ({ width: 1.2, stroke: b.classList.contains("on") ? "var(--fg)" : "var(--line)" }));
+  each(".ck", drawablyCheckbox);
+}
 function snap(root) {
   const m = new Map();
   if (!root) return m;
   root.querySelectorAll(".tile").forEach(t => {
-    const c = getComputedStyle(t), i = t.firstElementChild;
-    m.set(tileKey(t), { px: i.offsetWidth + "px", pct: i.style.width, state: t.className + t.getAttribute("aria-pressed"), color: c.color, border: c.borderTopColor });
+    const i = t.querySelector("i");
+    m.set(tileKey(t), { px: i.offsetWidth + "px", pct: i.style.width, state: t.className + t.getAttribute("aria-pressed"), color: getComputedStyle(t).color });
   });
   root.querySelectorAll(".item").forEach(r => m.set(r.dataset.iid, r.classList.contains("sel")));
   return m;
@@ -488,12 +574,11 @@ function snap(root) {
 function play(root, was) {
   const soft = { duration: calm.matches ? 0 : 260, easing: "cubic-bezier(.2,.8,.2,1)" };
   root.querySelectorAll(".tile").forEach(t => {
-    const p = was.get(tileKey(t)), i = t.firstElementChild;
+    const p = was.get(tileKey(t)), i = t.querySelector("i");
     if (!p) return;
     if (i.style.width !== p.pct) i.animate({ width: [p.px, i.style.width] }, soft);
     if (t.className + t.getAttribute("aria-pressed") !== p.state) {
-      const c = getComputedStyle(t);
-      t.animate({ color: [p.color, c.color], borderColor: [p.border, c.borderTopColor], transform: ["scale(.97)", "scale(1)"] }, soft);
+      t.animate({ color: [p.color, getComputedStyle(t).color], transform: ["scale(.97)", "scale(1)"] }, soft);
     }
   });
   root.querySelectorAll(".item").forEach(r => {
@@ -507,10 +592,15 @@ let sheetEl = null, shown = null;
 function render() {
   const s = step(), was = snap($("app")), sheetWas = sheetEl && snap(sheetEl);
   $("app").innerHTML = s === "checks" ? viewChecks() : viewOrder();
+  draw($("app"));
   if (s === shown) play($("app"), was);
   else {
     fade($("app"));
-    if (shown === "order" && s === "checks") $("app").querySelectorAll(".bars i")[1].animate({ transform: ["scaleX(0)", "scaleX(1)"] }, { duration: calm.matches ? 0 : 320, easing: "cubic-bezier(.2,.8,.2,1)" });
+    if (shown === "order" && s === "checks") {
+      const ease = { duration: calm.matches ? 0 : 320, easing: "cubic-bezier(.2,.8,.2,1)" };
+      $("app").querySelectorAll(".bars i")[1].animate({ transform: ["scaleX(0)", "scaleX(1)"] }, ease);
+      $("app").querySelector(".slip").animate({ transform: ["translateY(-18px)", "none"] }, ease);
+    }
     shown = s;
   }
   if (sheetEl) {
@@ -522,6 +612,7 @@ function render() {
     const wrap = document.createElement("div"); wrap.innerHTML = sheetHTML();
     sheetEl = wrap.firstElementChild; document.body.appendChild(sheetEl);
     fitScrim();
+    draw(sheetEl);
     if (sheetWas) play(sheetEl, sheetWas);
   }
 }
@@ -536,6 +627,7 @@ function fitScrim() {
 function refreshLive() {
   const live = $("live"), was = snap(live);
   live.innerHTML = budgets(solve(previewItems()));
+  draw(live);
   play(live, was);
 }
 window.visualViewport?.addEventListener("resize", fitScrim);
@@ -584,7 +676,7 @@ document.addEventListener("click", e => {
       ui.sheet = null; render(); break;
     }
     case "liverate": S.rateMode = "auto"; save(); fetchRate(); break;
-    case "split": S.split = !S.split; save(); el.setAttribute("aria-checked", S.split); break;
+    case "split": S.split = el.checked; save(); break;
     case "clear": S.items = []; S.example = false; ui.selected = null; ui.sheet = null; save(); if (step() !== "order") go("order"); else render(); break;
   }
 });
