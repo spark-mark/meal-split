@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Meal Split</title>
 <meta name="description" content="Split a restaurant order into meal-allowance checks that stay under the USD caps.">
-<meta name="theme-color" content="#fbf7ec" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b130d" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#fbf7ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Meal Split">
@@ -40,20 +40,8 @@
   --drawably-fill: var(--fg);
   --drawably-paper: var(--bg);
   --drawably-width: .8;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1b130d; --fg: #f7f0de; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
-    --track: #33261b; --hold: rgba(247,240,222,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
-    --lift: rgba(0,0,0,.5);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #1b130d; --fg: #f7f0de; --fg2: #a8937d; --fg3: #6c5947; --fill: #261b13; --line: #36281c;
-  --track: #33261b; --hold: rgba(247,240,222,.14); --knob: #d8cab5; --scrim: rgba(0,0,0,.6);
-  --lift: rgba(0,0,0,.5);
-  color-scheme: dark;
+  /* light only: cream paper even when the phone is in dark mode */
+  color-scheme: only light;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
@@ -214,7 +202,7 @@ h4, h4.drawably-host { font-size: 28px; font-weight: 500; line-height: 1.15; let
 .hold, .danger { border: 0; background: none; font-size: 16px; }
 .sheet-bar h2 { font-weight: 500; }
 
-/* the checks print as one slip: torn top and bottom, always cream, even on the dark theme */
+/* the checks print as one slip: torn top and bottom, always cream */
 .slip { filter: drop-shadow(0 8px 14px var(--lift)); }
 .receipt {
   --fg: #2a1c13; --fg2: #6f5c4b;
